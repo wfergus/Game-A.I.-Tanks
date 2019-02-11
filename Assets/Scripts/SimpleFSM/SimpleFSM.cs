@@ -8,6 +8,7 @@ public class SimpleFSM : FSM
         None,
         Patrol,
         Chase,
+        FastChase,
         Attack,
         Dead,
     }
@@ -71,6 +72,7 @@ public class SimpleFSM : FSM
         {
             case FSMState.Patrol: UpdatePatrolState(); break;
             case FSMState.Chase: UpdateChaseState(); break;
+            case FSMState.FastChase: UpdateFastChaseState(); break;
             case FSMState.Attack: UpdateAttackState(); break;
             case FSMState.Dead: UpdateDeadState(); break;
         }
@@ -99,7 +101,7 @@ public class SimpleFSM : FSM
         else if (Vector3.Distance(transform.position, playerTransform.position) <= 300.0f)
         {
             print("Switch to Chase Position");
-            curState = FSMState.Chase;
+            curState = FSMState.FastChase;
         }
 
         //Rotate to the target point
@@ -121,18 +123,32 @@ public class SimpleFSM : FSM
         //Check the distance with player tank
         //When the distance is near, transition to attack state
         float dist = Vector3.Distance(transform.position, playerTransform.position);
-        if (dist <= 200.0f)
+        if (dist <= 100.0f)
         {
             curState = FSMState.Attack;
         }
         //Go back to patrol is it become too far
-        else if (dist >= 300.0f)
+        //else if (dist >= 300.0f)
+        //{
+        //    curState = FSMState.Patrol;
+        //}
+        else if(dist >= 300.0f)
         {
-            curState = FSMState.Patrol;
+            curState = FSMState.FastChase;
         }
-
         //Go Forward
         transform.Translate(Vector3.forward * Time.deltaTime * curSpeed);
+    }
+    protected void UpdateFastChaseState()
+    {
+        destPos = playerTransform.position;
+
+        float dist = Vector3.Distance(transform.position * 1.4f, playerTransform.position);
+        if (dist <= 200.0f)
+        {
+            curState = FSMState.Chase;
+        }
+       
     }
 
     /// <summary>
