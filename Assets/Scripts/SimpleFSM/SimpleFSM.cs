@@ -13,6 +13,8 @@ public class SimpleFSM : FSM
         Sleep,
     }
 
+   
+
     //Current state that the NPC is reaching
     public FSMState curState;
 
@@ -178,8 +180,20 @@ public class SimpleFSM : FSM
         Quaternion turretRotation = Quaternion.LookRotation(destPos - turret.position);
         turret.rotation = Quaternion.Slerp(turret.rotation, turretRotation, Time.deltaTime * curRotSpeed);
 
+        float gunJam = Random.Range(0f, 1f);
         //Shoot the bullets
-        ShootBullet();
+        if (gunJam <= .25f)
+        {
+            shootRate = 4.0f;
+            ShootBullet();
+            Debug.Log("gun jammed");
+        }
+        else
+        {
+            shootRate = 3.0f;
+            ShootBullet();
+            Debug.Log("normal shot");
+        }
     }
 
     /// <summary>
